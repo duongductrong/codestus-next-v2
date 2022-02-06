@@ -255,7 +255,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
       }, // will be passed to the page component as props
     };
   } catch (e) {
-    console.log(e);
     return {
       notFound: true,
     };
