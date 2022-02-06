@@ -10,6 +10,7 @@ import { FaArrowDown, FaCheck, FaSearch } from "react-icons/fa";
 import Badge from "../components/Badge/Badge";
 import Card from "../components/Card/Card";
 import ContainerMedium from "../components/Container/ContainerMedium";
+import Empty from "../components/Empty/Empty";
 import IconButton from "../components/Icon/IconButton";
 import Input from "../components/Input/Input";
 import NextSeoCustom from "../components/NextSeo/NextSeoCustom";
@@ -133,19 +134,23 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
           </Fragment>
         ) : (
           <Fragment>
-            {data.map(
-              ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
-                <Card
-                  title={title}
-                  description={description}
-                  countViewer={views}
-                  slug={slug}
-                  className="mb-20"
-                  createdAt={publishAt ?? createdAt}
-                  key={`${postId?.toString()}${createdAt?.toString()}`}
-                  tag={tags?.map((item: any) => item.tag)}
-                />
+            {data.length ? (
+              data.map(
+                ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
+                  <Card
+                    title={title}
+                    description={description}
+                    countViewer={views}
+                    slug={slug}
+                    className="mb-20"
+                    createdAt={publishAt ?? createdAt}
+                    key={`${postId?.toString()}${createdAt?.toString()}`}
+                    tag={tags?.map((item: any) => item.tag)}
+                  />
+                )
               )
+            ) : (
+              <Empty />
             )}
 
             {/* Bot read navigation

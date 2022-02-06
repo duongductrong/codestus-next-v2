@@ -6,6 +6,7 @@ import React, { Fragment } from "react";
 import { FaArrowDown, FaCode, FaHtml5, FaJs, FaLaravel, FaNodeJs, FaReact, FaVuejs } from "react-icons/fa";
 import Card from "../../components/Card/Card";
 import ContainerMedium from "../../components/Container/ContainerMedium";
+import Empty from "../../components/Empty/Empty";
 import IconButton from "../../components/Icon/IconButton";
 import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
 import Skeleton from "../../components/Skeleton/Skeleton";
@@ -14,8 +15,8 @@ import { PostI } from "../../core/services/postService";
 import tagService, { TagI } from "../../core/services/tagService";
 import useTag from "../../hooks/useTag";
 import MainLayout from "../../Layout/MainLayout";
-import { NextPageWithLayout } from "../_app";
 import StaticAvatar from "../../public/statics/avatar.png";
+import { NextPageWithLayout } from "../_app";
 
 export interface GetServerSideParams {
   slug?: string;
@@ -99,19 +100,23 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => 
       </Typography>
 
       <ContainerMedium className="mt-16">
-        {_posts.map(
-          ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
-            <Card
-              title={title}
-              description={description}
-              countViewer={views}
-              slug={slug}
-              className="mb-20"
-              createdAt={publishAt ?? createdAt}
-              key={`${postId?.toString()}${createdAt?.toString()}`}
-              tag={tags?.map((item: any) => item.tag)}
-            />
+        {_posts.length ? (
+          _posts.map(
+            ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
+              <Card
+                title={title}
+                description={description}
+                countViewer={views}
+                slug={slug}
+                className="mb-20"
+                createdAt={publishAt ?? createdAt}
+                key={`${postId?.toString()}${createdAt?.toString()}`}
+                tag={tags?.map((item: any) => item.tag)}
+              />
+            )
           )
+        ) : (
+          <Empty />
         )}
 
         {/* Bot read navigation It's great for SEO content */}
