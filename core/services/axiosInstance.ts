@@ -27,7 +27,7 @@ export interface AxiosHttpResponse<
 export interface AxiosHttpError<T = any> extends HttpErrorApi<T> {}
 
 const axiosInstance = Axios.create({
-  baseURL: `http://127.0.0.1:8000/api/v1/`,
+  baseURL: process.env.APP_API ?? "BASE_URL",
   paramsSerializer: (q) => queryString.stringify(q),
 });
 
