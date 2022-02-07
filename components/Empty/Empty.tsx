@@ -10,7 +10,7 @@ export interface EmptyProps extends AtomicComponent {
   iconSize?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
-const Empty: FC<EmptyProps> = ({ iconSize, className, name, ...props }) => {
+const Empty: FC<EmptyProps> = ({ iconSize = "md", className, name, ...props }) => {
   const _iconSize =
     iconSize === "sm"
       ? 56
