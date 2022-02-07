@@ -1,10 +1,12 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
-import React, { FC } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { useRouter } from "next/router";
+import React from "react";
+import { FaArrowLeft, FaHome } from "react-icons/fa";
 import Badge from "../../components/Badge/Badge";
 import CardAuthor from "../../components/Card/CardAuthor";
 import ContainerMedium from "../../components/Container/ContainerMedium";
+import Empty from "../../components/Empty/Empty";
 import IconButton from "../../components/Icon/IconButton";
 import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
 import TableOfContents from "../../components/TableOfContents/TableOfContents";
@@ -12,14 +14,21 @@ import Typography from "../../components/Typography/Typography";
 import postService, { PostI } from "../../core/services/postService";
 import { TagI } from "../../core/services/tagService";
 import usePrism from "../../hooks/usePrism";
+import MainLayout from "../../Layout/MainLayout";
+import { NextPageWithLayout } from "../_app";
 
 export interface PostSlugProps {
   post: PostI;
   relatedPosts: PostI[];
 }
 
-const PostSlug: FC<PostSlugProps> = ({ post, relatedPosts }) => {
+const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => {
   usePrism();
+  const router = useRouter();
+
+  const onPreviousPage = () => {
+    router.back();
+  };
 
   return (
     <ContainerMedium className="lg:flex lg:flex-wrap my-32 items-start">
@@ -49,13 +58,19 @@ const PostSlug: FC<PostSlugProps> = ({ post, relatedPosts }) => {
         {post.title}
       </Typography>
 
-      <div className="w-full mb-6 lg:sticky top-8">
+      <div className="w-full mb-6 lg:sticky top-8 space-x-4">
+        <a className="inline-block" onClick={onPreviousPage}>
+          <IconButton>
+            <FaArrowLeft />
+          </IconButton>
+          {/* <span className="ml-2 font-semibold text-blue-500 text-sm">Trở về trang chủ</span> */}
+        </a>
         <Link href={"/"}>
-          <a className="hover:-translate-x-4 transition-all duration-300 inline-block">
+          <a className="inline-block">
             <IconButton>
-              <FaArrowLeft />
+              <FaHome />
             </IconButton>
-            <span className="ml-2 font-semibold text-blue-500 text-sm">Trở về trang chủ</span>
+            {/* <span className="ml-2 font-semibold text-blue-500 text-sm">Trở về trang chủ</span> */}
           </a>
         </Link>
       </div>
@@ -83,18 +98,24 @@ const PostSlug: FC<PostSlugProps> = ({ post, relatedPosts }) => {
           </div>
 
           {/* Related posts */}
-          <div className="mt-8 rounded-lg pr-6 py-4">
-            <h2 className="text-md mb-4 font-semibold">Có thể bạn quan tâm</h2>
-            <ul className="list-disc pl-5">
-              {(relatedPosts ?? []).map(({ postId, slug, title }) => (
-                <li className="text-sm text-slate-300 font-medium mb-3" key={`${postId}-${slug}`}>
-                  <Link href={`/posts/${slug}`}>
-                    <a className="text-slate-400 hover:text-blue-600 transition-all duration-300">{title}</a>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {relatedPosts.length ? (
+            <div className="mt-8 rounded-lg pr-6 py-4">
+              <h2 className="text-md mb-4 font-semibold">Có thể bạn quan tâm</h2>
+              <ul className="list-disc pl-5">
+                {relatedPosts.length ? (
+                  (relatedPosts ?? []).map(({ postId, slug, title }) => (
+                    <li className="text-sm text-slate-300 font-medium mb-3" key={`${postId}-${slug}`}>
+                      <Link href={`/posts/${slug}`}>
+                        <a className="text-slate-400 hover:text-blue-600 transition-all duration-300">{title}</a>
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <Empty iconSize="sm" />
+                )}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
     </ContainerMedium>
@@ -126,5 +147,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
     notFound: isNotFound,
   };
 };
+
+PostSlug.Layout = MainLayout;
 
 export default PostSlug;

@@ -1,5 +1,4 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Fragment } from "react";
@@ -15,7 +14,8 @@ import { PostI } from "../../core/services/postService";
 import tagService, { TagI } from "../../core/services/tagService";
 import useTag from "../../hooks/useTag";
 import MainLayout from "../../Layout/MainLayout";
-import StaticAvatar from "../../public/statics/avatar.png";
+// import Image from "next/image";
+// import StaticAvatar from "../../public/statics/avatar.png";
 import { NextPageWithLayout } from "../_app";
 
 export interface GetServerSideParams {
@@ -60,7 +60,7 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => 
     <Fragment>
       <NextSeoCustom title={tag.name} description={tag.description} url={asPath} />
 
-      <div className="text-center mb-4 flex items-center justify-center flex-wrap">
+      {/* <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         <Link href={"/"}>
           <a>
             <Image
@@ -72,7 +72,7 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => 
             />
           </a>
         </Link>
-      </div>
+      </div> */}
 
       <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         {tag.name?.toLowerCase().includes("react") ? (
