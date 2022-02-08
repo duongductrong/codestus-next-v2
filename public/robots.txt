@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://blog.codestus.com/public_html/sitemap.xml
