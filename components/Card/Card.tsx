@@ -48,8 +48,10 @@ const Card: FC<CardProps> = ({ title, description, slug, countViewer = "0", crea
           </a>
         </Link>
 
-        {countViewer && (
+        {countViewer ? (
           <span className="text-sm text-slate-400 mb-2 inline-block">{countViewer.toString()} lượt xem</span>
+        ) : (
+          ""
         )}
 
         {/* Card desc */}
