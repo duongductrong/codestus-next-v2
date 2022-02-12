@@ -6,7 +6,6 @@ import { Fragment, ReactElement, ReactNode } from "react";
 import ProgressingN from "../components/Progressing/ProgressingN";
 import "../styles/globals.css";
 import "../styles/vendors/_prism-okaidia.css";
-import "../styles/_fade-io-y-transition.css";
 
 export type NextPageWithLayout<T = any> = NextPage<T> & {
   // eslint-disable-next-line no-unused-vars

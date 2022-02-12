@@ -1,0 +1,23 @@
+.slide-enter {
+  @apply w-full h-0 top-0 opacity-0;
+}
+
+.slide-enter-active {
+  @apply opacity-100 top-0;
+  @apply w-full h-screen;
+}
+
+.slide-enter-done {
+  @apply opacity-100 top-0;
+  @apply w-full h-screen;
+}
+
+.slide-exit {
+  @apply bottom-0 opacity-90 scale-125;
+  @apply w-full h-1/2;
+}
+
+.slide-exit-active {
+  @apply bottom-0 opacity-0;
+  @apply w-full h-0;
+}

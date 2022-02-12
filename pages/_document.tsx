@@ -65,6 +65,7 @@ class MyDocument extends Document {
           {/* <!-- End Google Tag Manager (noscript) --> */}
 
           <Main />
+          <div id="portal-overlay"></div>
           <NextScript />
         </body>
       </Html>

@@ -22,8 +22,8 @@ import tagService, { HttpGetTagsResponse, TagI } from "../core/services/tagServi
 import trackingService from "../core/services/trackingService";
 import usePosts from "../hooks/usePosts";
 import MainLayout from "../Layout/MainLayout";
-// import Image from "next/image";
-// import StaticAvatar from "../public/statics/avatar.png";
+import Image from "next/image";
+import StaticAvatar from "../public/statics/avatar.png";
 import { NextPageWithLayout } from "./_app";
 
 export interface HomeProps {
@@ -74,7 +74,7 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
     <Fragment>
       <NextSeoCustom url={asPath} />
 
-      {/* <div className="text-center mb-4 flex items-center justify-center flex-wrap">
+      <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         <Link href={"/"}>
           <a>
             <Image
@@ -86,7 +86,7 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
             />
           </a>
         </Link>
-      </div> */}
+      </div>
 
       <Typography tagName="h1" variant="h2" className="text-center mb-4 font-bold">
         Blogging
