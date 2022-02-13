@@ -16,10 +16,10 @@ const Sitemap = () => {
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   try {
     // Get url showing sitemap.xml
+    const { sitemap, url } = useSitemapServerSide();
     const appUrl = process.env.APP_URL;
     let postsUrl: string[] = [],
       tagsUrl: string[] = [];
-    const { sitemap, url } = useSitemapServerSide();
 
     const allFetched = await Promise.allSettled([
       postService.getList({ page: 1, rowsPerPage: 9999, orderBy: "desc" }, {}),
@@ -55,7 +55,11 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       );
     }
 
-    const urls = [...postsUrl, ...tagsUrl];
+    const urls = [
+      url({ lastModify: moment().toISOString(), url: `${appUrl}`, priority: 1, changeFreq: "daily" }),
+      ...postsUrl,
+      ...tagsUrl,
+    ];
 
     res?.setHeader("Content-type", "text/xml");
     res?.write(sitemap(urls));
