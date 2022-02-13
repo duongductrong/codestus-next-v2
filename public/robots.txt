@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://blog.codestus.com/public_html/sitemap.xml
+Sitemap: https://codestus.com/sitemap.xml
