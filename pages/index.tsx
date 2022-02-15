@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import classNames from "classnames";
 import _ from "lodash";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, Fragment } from "react";
@@ -22,7 +22,6 @@ import tagService, { HttpGetTagsResponse, TagI } from "../core/services/tagServi
 import trackingService from "../core/services/trackingService";
 import usePosts from "../hooks/usePosts";
 import MainLayout from "../Layout/MainLayout";
-import Image from "next/image";
 import StaticAvatar from "../public/statics/avatar.png";
 import { NextPageWithLayout } from "./_app";
 
@@ -34,9 +33,11 @@ export interface HomeProps {
     currentPage?: number;
     totalPages?: number;
   };
+
+  notFound?: Boolean;
 }
 
-const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
+const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate, notFound }) => {
   const colors = [
     { text: "text-purple-600", bg: "bg-purple-100" },
     { text: "text-blue-600", bg: "bg-blue-100" },
@@ -134,7 +135,7 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
           </Fragment>
         ) : (
           <Fragment>
-            {data.length ? (
+            {!notFound && data.length ? (
               data.map(
                 ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
                   <Card
@@ -186,29 +187,34 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
         {error && !loading && <p className="text-red-500 ">Tải bài viết mới thất bại, vui lòng thử lại.</p>}
       </div>
 
-      {!outOfData ? (
-        <div className="text-center">
-          {!loading ? (
-            <IconButton onClick={onInfiniteLoadData} className="animate-bounce">
-              <FaArrowDown />
-            </IconButton>
+      {/* Button Infinite loading more posts */}
+      {notFound ? (
+        <Fragment>
+          {!outOfData ? (
+            <div className="text-center">
+              {!loading ? (
+                <IconButton onClick={onInfiniteLoadData} className="animate-bounce">
+                  <FaArrowDown />
+                </IconButton>
+              ) : (
+                <Spinner className="mx-auto" />
+              )}
+            </div>
           ) : (
-            <Spinner className="mx-auto" />
+            <div className="text-center">
+              <IconButton className="mb-4">
+                <FaCheck />
+              </IconButton>
+              <p className="font-semibold text-blue-600">Không còn bài viết nữa</p>
+            </div>
           )}
-        </div>
-      ) : (
-        <div className="text-center">
-          <IconButton className="mb-4">
-            <FaCheck />
-          </IconButton>
-          <p className="font-semibold text-blue-600">Không còn bài viết nữa</p>
-        </div>
-      )}
+        </Fragment>
+      ) : null}
     </Fragment>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+Home.getInitialProps = async (context) => {
   try {
     const currentPage: number = Number((context.query as any).page) ?? 1;
 
@@ -247,15 +253,15 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
 
     return {
-      props: {
-        paginate: { currentPage, totalPages },
-
-        tags,
-        posts,
-      }, // will be passed to the page component as props
+      paginate: { currentPage, totalPages },
+      tags,
+      posts,
     };
   } catch (e) {
     return {
+      paginate: {},
+      tags: [],
+      posts: [],
       notFound: true,
     };
   }

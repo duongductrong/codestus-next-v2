@@ -67,8 +67,8 @@ const Navbar: FC<NavbarProps> = ({ ...props }) => {
   return (
     <nav role="navigation" {...props}>
       <Overlay>
-        <CSSTransition mountOnEnter={true} unmountOnExit={true} timeout={700} classNames="slide" in={isOpen}>
-          <div className="fixed w-full bg-gray-900 left-0 transition-all duration-700 z-40 p-4 flex items-center justify-center flex-col">
+        <CSSTransition mountOnEnter={true} unmountOnExit={true} timeout={500} classNames="slide" in={isOpen}>
+          <div className="fixed w-full bg-gray-900 left-0 top-0 transition-all duration-700 z-40 p-4 flex items-center justify-center flex-col">
             <div className="mb-4 text-center">
               Welcome to you.
               <br />
