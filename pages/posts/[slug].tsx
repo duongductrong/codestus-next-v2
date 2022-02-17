@@ -1,4 +1,3 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -7,6 +6,7 @@ import Badge from "../../components/Badge/Badge";
 import CardAuthor from "../../components/Card/CardAuthor";
 import ContainerMedium from "../../components/Container/ContainerMedium";
 import Empty from "../../components/Empty/Empty";
+import NotFound from "../../components/Error/NotFound";
 import IconButton from "../../components/Icon/IconButton";
 import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
 import TableOfContents from "../../components/TableOfContents/TableOfContents";
@@ -18,11 +18,12 @@ import MainLayout from "../../Layout/MainLayout";
 import { NextPageWithLayout } from "../_app";
 
 export interface PostSlugProps {
-  post: PostI;
-  relatedPosts: PostI[];
+  post?: PostI;
+  relatedPosts?: PostI[];
+  notFound?: boolean;
 }
 
-const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => {
+const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts, notFound }) => {
   usePrism();
   const router = useRouter();
 
@@ -30,32 +31,35 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
     router.back();
   };
 
+  // Not found this post
+  if (notFound) return <NotFound />;
+
   return (
     <ContainerMedium className="lg:flex lg:flex-wrap my-32 items-start">
       {/* Next-seo Customize */}
       <NextSeoCustom
-        title={post.title}
-        description={post.description}
-        url={"/posts/" + post.slug}
+        title={post?.title}
+        description={post?.description}
+        url={"/posts/" + post?.slug}
         openGraphArticle={{
-          authors: [post.user?.name ?? ""],
-          publishedTime: post.publish_at,
-          tags: (post.tags ?? [])?.map(({ name }) => name ?? ""),
+          authors: [post?.user?.name ?? ""],
+          publishedTime: post?.publish_at,
+          tags: (post?.tags ?? [])?.map(({ name }) => name ?? ""),
         }}
         articleJson={{
-          title: post.title ?? "",
-          description: post.description ?? "",
-          authorName: post.user?.name ?? "",
-          url: `/posts/${post.slug}`,
-          datePublished: post.publish_at ?? post.created_at ?? "",
-          images: [post.thumbnail ?? ""],
+          title: post?.title ?? "",
+          description: post?.description ?? "",
+          authorName: post?.user?.name ?? "",
+          url: `/posts/${post?.slug}`,
+          datePublished: post?.publish_at ?? post?.created_at ?? "",
+          images: [post?.thumbnail ?? ""],
           type: "Blog",
-          dateModified: post.updated_at,
+          dateModified: post?.updated_at,
         }}
       />
 
       <Typography tagName="h1" variant="h2" className="font-bold mb-16 w-full text-center">
-        {post.title}
+        {post?.title}
       </Typography>
 
       <div className="w-full mb-6 lg:sticky top-8 space-x-4">
@@ -76,15 +80,15 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
       </div>
 
       <div className="md:w-4/12 md:pr-4 space-y-4 mb-10 md:mb-0 lg:sticky top-24">
-        <CardAuthor title="@duongductrong" description="Frontend Developer" src={post.user?.avatar} />
+        <CardAuthor title="@duongductrong" description="Frontend Developer" src={post?.user?.avatar} />
 
         {/* Table of contents */}
-        {post.table_of_contents.length ? (
-          <TableOfContents title="Mục lục bài viết" data={post.table_of_contents} />
+        {post?.table_of_contents.length ? (
+          <TableOfContents title="Mục lục bài viết" data={post?.table_of_contents} />
         ) : null}
       </div>
       <div className="md:w-8/12 md:pl-4">
-        <div className="prose" dangerouslySetInnerHTML={{ __html: post.content_html ?? "" }}></div>
+        <div className="prose" dangerouslySetInnerHTML={{ __html: post?.content_html ?? "" }}></div>
 
         {/* <Divider className="my-5" /> */}
 
@@ -92,17 +96,17 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
           {/* Tags */}
           <div className="space-x-2 mb-2">
             <span className="font-semibold">Tag: </span>
-            {post.tags?.map((tag: TagI, index: number) => (
+            {post?.tags?.map((tag: TagI, index: number) => (
               <Badge key={index}>{tag.name}</Badge>
             ))}
           </div>
 
           {/* Related posts */}
-          {relatedPosts.length ? (
+          {relatedPosts?.length ? (
             <div className="mt-8 rounded-lg pr-6 py-4">
               <h2 className="text-md mb-4 font-semibold">Có thể bạn quan tâm</h2>
               <ul className="list-disc pl-5">
-                {relatedPosts.length ? (
+                {relatedPosts?.length ? (
                   (relatedPosts ?? []).map(({ postId, slug, title }) => (
                     <li className="text-sm text-slate-300 font-medium mb-3" key={`${postId}-${slug}`}>
                       <Link href={`/posts/${slug}`}>
@@ -122,9 +126,9 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
+PostSlug.getInitialProps = async (ctx) => {
   let response;
-  let post: PostI | null = null;
+  let post: PostI | undefined;
   let relatedPosts: PostI[] = [];
   let isNotFound: boolean = false;
 
@@ -140,11 +144,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
   }
 
   return {
-    props: {
-      post: post,
-      relatedPosts: relatedPosts,
-    },
-    notFound: isNotFound,
+    post: post,
+    relatedPosts: relatedPosts,
+    notFound: isNotFound ?? true,
   };
 };
 

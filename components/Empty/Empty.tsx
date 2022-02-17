@@ -26,9 +26,11 @@ const Empty: FC<EmptyProps> = ({ iconSize = "md", className, name, ...props }) =
   return (
     <div {...props} className={classNames("text-center py-8", className)}>
       <FaBoxOpen size={_iconSize} className="mx-auto text-slate-300" />
-      <Typography variant="p" tagName="p" className="text-slate-400">
-        <span dangerouslySetInnerHTML={{ __html: name ?? "Not found anymore items." }}></span>
-      </Typography>
+      {name && (
+        <Typography variant="p" tagName="p" className="text-slate-400">
+          <span dangerouslySetInnerHTML={{ __html: name }}></span>
+        </Typography>
+      )}
     </div>
   );
 };

@@ -1,29 +1,15 @@
-import Link from "next/link";
+/* eslint-disable react/no-unescaped-entities */
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
-import Button from "../components/Button/Button";
-import Empty from "../components/Empty/Empty";
+import ServerError from "../components/Error/ServerError";
 import MainLayout from "../Layout/MainLayout";
 import { NextPageWithLayout } from "./_app";
 
 export interface ServerErrorProps {}
 
-const ServerError: NextPageWithLayout<ServerErrorProps> = ({}) => {
-  return (
-    <section className="text-center flex items-center justify-center">
-      <div className="mt-48">
-        <Empty iconSize="2xl" name="Server error" />
-
-        <Link href={"/"} passHref>
-          <Button tagName="a" color="secondary" beforeIcon={<FaArrowLeft className="mr-2" />}>
-            Trở về trang chủ
-          </Button>
-        </Link>
-      </div>
-    </section>
-  );
+const ServerErrorPage: NextPageWithLayout<ServerErrorProps> = ({}) => {
+  return <ServerError />;
 };
 
-ServerError.Layout = MainLayout;
+ServerErrorPage.Layout = MainLayout;
 
-export default ServerError;
+export default ServerErrorPage;

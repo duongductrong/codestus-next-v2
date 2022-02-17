@@ -1,4 +1,3 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Fragment } from "react";
@@ -31,12 +30,14 @@ export interface PostTagProps {
   posts: PostI[];
 
   paginate: {
-    page: number;
-    totalPagesOfPosts: number;
+    page?: number;
+    totalPagesOfPosts?: number;
   };
+
+  notFound?: boolean;
 }
 
-const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => {
+const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate, notFound }) => {
   const { asPath } = useRouter();
   const {
     loading,
@@ -144,21 +145,25 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => 
         {loading && <Skeleton.Card bgTransparent={true} />}
       </ContainerMedium>
 
-      {!outOfData && (
-        <section className="text-center">
-          <IconButton onClick={onLoadInfinitePosts} className="animate-bounce">
-            <FaArrowDown />
-          </IconButton>
-        </section>
-      )}
+      {!notFound ? (
+        <Fragment>
+          {!outOfData && (
+            <section className="text-center">
+              <IconButton onClick={onLoadInfinitePosts} className="animate-bounce">
+                <FaArrowDown />
+              </IconButton>
+            </section>
+          )}
+        </Fragment>
+      ) : null}
     </Fragment>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+PostTag.getInitialProps = async (context) => {
   try {
     const query: GetServerSideQuery = context.query;
-    const { slug } = context.params as GetServerSideParams;
+    const { slug } = context.query as GetServerSideParams;
     const paginate: { page?: number; totalPagesOfPosts?: number } = {
       page: Number(query.page ?? 1),
       totalPagesOfPosts: 0,
@@ -172,14 +177,19 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     paginate.totalPagesOfPosts = Math.ceil((data.totalPosts ?? 0) / (data.posts?.per_page ?? 0)) ?? 0;
 
     return {
-      props: {
-        tag: data.tag,
-        posts: data.posts?.data ?? [],
-        paginate,
-      },
+      tag: data.tag,
+      posts: data.posts?.data ?? [],
+      paginate,
+      notFound: false,
     };
   } catch {
     return {
+      tag: {},
+      posts: [],
+      paginate: {
+        page: 1,
+        totalPagesOfPosts: 0,
+      },
       notFound: true,
     };
   }
