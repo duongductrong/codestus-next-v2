@@ -188,7 +188,7 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate, notFound }
       </div>
 
       {/* Button Infinite loading more posts */}
-      {notFound ? (
+      {!notFound ? (
         <Fragment>
           {!outOfData ? (
             <div className="text-center">
