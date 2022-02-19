@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { FormEvent, Fragment } from "react";
 import { FaArrowDown, FaCheck, FaSearch } from "react-icons/fa";
 import Badge from "../components/Badge/Badge";
+import Button from "../components/Button/Button";
 import Card from "../components/Card/Card";
 import ContainerMedium from "../components/Container/ContainerMedium";
 import Empty from "../components/Empty/Empty";
@@ -193,9 +194,9 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate, notFound }
           {!outOfData ? (
             <div className="text-center">
               {!loading ? (
-                <IconButton onClick={onInfiniteLoadData} className="animate-bounce">
-                  <FaArrowDown />
-                </IconButton>
+                <Button onClick={onInfiniteLoadData} color="secondary" beforeIcon={<FaArrowDown className="mr-2" />}>
+                  Tải thêm bài viết
+                </Button>
               ) : (
                 <Spinner className="mx-auto" />
               )}
@@ -216,7 +217,8 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate, notFound }
 
 Home.getInitialProps = async (context) => {
   try {
-    const currentPage: number = Number((context.query as any).page) ?? 1;
+    const queryPage = (context.query as any).page;
+    const currentPage: number = queryPage ? Number(queryPage) : 1;
 
     let posts: PostI[] = [];
     let tags: TagI[] = [];
@@ -259,7 +261,10 @@ Home.getInitialProps = async (context) => {
     };
   } catch (e) {
     return {
-      paginate: {},
+      paginate: {
+        currentPage: 1,
+        totalPages: 0,
+      },
       tags: [],
       posts: [],
       notFound: true,

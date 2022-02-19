@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import { FaArrowLeft, FaHome } from "react-icons/fa";
 import Badge from "../../components/Badge/Badge";
-import CardAuthor from "../../components/Card/CardAuthor";
 import ContainerMedium from "../../components/Container/ContainerMedium";
+import Giscus from "../../components/Discuss/Giscus";
 import Empty from "../../components/Empty/Empty";
 import NotFound from "../../components/Error/NotFound";
 import IconButton from "../../components/Icon/IconButton";
@@ -25,6 +25,88 @@ export interface PostSlugProps {
 
 const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts, notFound }) => {
   usePrism();
+  // useScript("https://utteranc.es/client.js", {
+  //   attributes: [
+  //     {
+  //       key: "repo",
+  //       value: "duongductrong/codestus-next-v2",
+  //     },
+  //     {
+  //       key: "issue-term",
+  //       value: "title",
+  //     },
+  //     {
+  //       key: "theme",
+  //       value: "github-light",
+  //     },
+  //     {
+  //       key: "crossorigin",
+  //       value: "anonymous",
+  //     },
+  //     {
+  //       key: "async",
+  //       value: true,
+  //     },
+  //     {
+  //       key: "label",
+  //       value: "comments",
+  //     },
+  //   ],
+  // });
+
+  // useScript("https://giscus.app/client.js", {
+  //   attributes: [
+  //     {
+  //       key: "data-repo",
+  //       value: "duongductrong/codestus-next-v2",
+  //     },
+  //     {
+  //       key: "data-repo-id",
+  //       value: "R_kgDOGwoYXQ",
+  //     },
+  //     {
+  //       key: "data-category",
+  //       value: "General",
+  //     },
+  //     {
+  //       key: "data-category-id",
+  //       value: "DIC_kwDOGwoYXc4CBO7p",
+  //     },
+  //     {
+  //       key: "data-mapping",
+  //       value: "title",
+  //     },
+  //     {
+  //       key: "data-reactions-enabled",
+  //       value: "1",
+  //     },
+  //     {
+  //       key: "data-emit-metadata",
+  //       value: "0",
+  //     },
+  //     {
+  //       key: "data-input-position",
+  //       value: "bottom",
+  //     },
+  //     {
+  //       key: "data-theme",
+  //       value: "light",
+  //     },
+  //     {
+  //       key: "data-lang",
+  //       value: "en",
+  //     },
+  //     {
+  //       key: "crossorigin",
+  //       value: "anonymous",
+  //     },
+  //     {
+  //       key: "async",
+  //       value: true,
+  //     },
+  //   ],
+  // });
+
   const router = useRouter();
 
   const onPreviousPage = () => {
@@ -58,6 +140,8 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts, notFo
         }}
       />
 
+      <div className="utterances"></div>
+
       <Typography tagName="h1" variant="h2" className="font-bold mb-16 w-full text-center">
         {post?.title}
       </Typography>
@@ -80,7 +164,7 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts, notFo
       </div>
 
       <div className="md:w-4/12 md:pr-4 space-y-4 mb-10 md:mb-0 lg:sticky top-24">
-        <CardAuthor title="@duongductrong" description="Frontend Developer" src={post?.user?.avatar} />
+        {/* <CardAuthor title="@codestus.com" description="Web developer" src={post?.user?.avatar} /> */}
 
         {/* Table of contents */}
         {post?.table_of_contents.length ? (
@@ -121,6 +205,21 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts, notFo
             </div>
           ) : null}
         </div>
+
+        <Giscus
+          dataRepo="duongductrong/codestus-next-v2"
+          dataRepoId="R_kgDOGwoYXQ"
+          dataCategory="General"
+          dataCategoryId="DIC_kwDOGwoYXc4CBO7p"
+          dataMapping="title"
+          dataReactionsEnabled="4"
+          dataEmitMetadata="0"
+          dataInputPosition="bottom"
+          dataTheme="light"
+          dataLang="en"
+          crossorigin="anonymous"
+          async={true}
+        />
       </div>
     </ContainerMedium>
   );
