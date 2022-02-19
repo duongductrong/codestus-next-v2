@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { FaArrowLeft, FaHome } from "react-icons/fa";
 import Badge from "../../components/Badge/Badge";
 import ContainerMedium from "../../components/Container/ContainerMedium";
@@ -11,6 +11,7 @@ import IconButton from "../../components/Icon/IconButton";
 import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
 import TableOfContents from "../../components/TableOfContents/TableOfContents";
 import Typography from "../../components/Typography/Typography";
+import hitService from "../../core/services/hitService";
 import postService, { PostI } from "../../core/services/postService";
 import { TagI } from "../../core/services/tagService";
 import usePrism from "../../hooks/usePrism";
@@ -30,6 +31,14 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
   const onPreviousPage = () => {
     router.back();
   };
+
+  // Hit mean is increase visitor counting of post
+  // Base on slug to find the post can be update visitor quantity
+  useEffect(() => {
+    try {
+      hitService.hitPost(post?.slug ?? "");
+    } catch {}
+  }, [post?.slug]);
 
   return (
     <ContainerMedium className="lg:flex lg:flex-wrap my-32 items-start">
