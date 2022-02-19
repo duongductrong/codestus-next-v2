@@ -22,12 +22,12 @@ function usePosts({ data: initializeData = [], page, rowsPerPage, search }: useH
   const [loading, setLoading] = useState<boolean>(false);
 
   // The function support change paginate to pre-fetch
-  const preFetch = () => {
+  const preFetch = (page?: number) => {
     // Only fetch when should-fetch variable is passed
     if (!computed.outOfData) {
       setPaginate((prevState) => ({
         ...prevState,
-        page: prevState.page + 1,
+        page: !page ? prevState.page + 1 : page,
       }));
     }
   };

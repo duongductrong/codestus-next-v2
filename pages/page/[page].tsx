@@ -1,37 +1,34 @@
 /* eslint-disable react/no-unescaped-entities */
 import classNames from "classnames";
-import { GetStaticProps, GetStaticPropsContext } from "next";
+import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import Badge from "../components/Badge/Badge";
-import Card from "../components/Card/Card";
-import ContainerMedium from "../components/Container/ContainerMedium";
-import Empty from "../components/Empty/Empty";
-import NextSeoCustom from "../components/NextSeo/NextSeoCustom";
-import Skeleton from "../components/Skeleton/Skeleton";
-import Typography from "../components/Typography/Typography";
-import { HttpResponseApi } from "../core/services/axiosInstance";
-import postService, { HttpGetPostsListResponse, PostI } from "../core/services/postService";
-import tagService, { HttpGetTagsResponse, TagI } from "../core/services/tagService";
-import usePosts from "../hooks/usePosts";
-import MainLayout from "../Layout/MainLayout";
-import StaticAvatar from "../public/statics/avatar.png";
-import { NextPageWithLayout } from "./_app";
+import { HomeProps } from "..";
+import Badge from "../../components/Badge/Badge";
+import Card from "../../components/Card/Card";
+import ContainerMedium from "../../components/Container/ContainerMedium";
+import Empty from "../../components/Empty/Empty";
+import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
+import Skeleton from "../../components/Skeleton/Skeleton";
+import Typography from "../../components/Typography/Typography";
+import { HttpResponseApi } from "../../core/services/axiosInstance";
+import postService, { HttpGetPostsListResponse, PostI } from "../../core/services/postService";
+import tagService, { HttpGetTagsResponse, TagI } from "../../core/services/tagService";
+import usePosts from "../../hooks/usePosts";
+import MainLayout from "../../Layout/MainLayout";
+import StaticAvatar from "../../public/statics/avatar.png";
+import { NextPageWithLayout } from "../_app";
 
-export interface HomeProps {
-  posts: PostI[];
-  tags: TagI[];
+export interface PagesProps extends HomeProps {}
 
-  paginate: {
-    currentPage?: number;
-    totalPages?: number;
-  };
-}
-
-const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
+const Pages: NextPageWithLayout<PagesProps> = ({
+  posts = [],
+  tags = [],
+  paginate = { currentPage: 1, totalPages: 0 },
+}) => {
   const colors = [
     { text: "text-purple-600", bg: "bg-purple-100" },
     { text: "text-blue-600", bg: "bg-blue-100" },
@@ -49,10 +46,10 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
     rowsPerPage: 6,
   });
 
-  // const onSearching = _.debounce((event: FormEvent<HTMLInputElement>) => {
-  //   const value = (event?.target as any)?.value;
-  //   searching(value);
-  // }, 500);
+//   const onSearching = _.debounce((event: FormEvent<HTMLInputElement>) => {
+//     const value = (event?.target as any)?.value;
+//     searching(value);
+//   }, 500);
 
   return (
     <Fragment>
@@ -165,9 +162,32 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({}: GetStaticPropsContext) => {
+export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    const queryPage = 1;
+    const rowsPerPage = 6;
+    const respond = await postService.getList({ with: "tags", page: 1, rowsPerPage: rowsPerPage }, {});
+
+    const paths = Array(Math.ceil(respond.data.total / rowsPerPage) ?? 0)
+      .fill(1)
+      .map((_, index) => {
+        return `/page/${index + 1}`;
+      });
+
+    return {
+      paths: paths,
+      fallback: true,
+    };
+  } catch {
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  try {
+    const queryPage = (params as any).page ?? 1;
     const currentPage: number = queryPage && !Number.isNaN(queryPage) ? Number(queryPage) : 1;
     const rowsPerPage = 6;
 
@@ -203,6 +223,7 @@ export const getStaticProps: GetStaticProps = async ({}: GetStaticPropsContext) 
         paginate: { currentPage, totalPages },
         tags,
         posts,
+        notFound: false,
       },
       revalidate: 3600 / 2,
     };
@@ -213,64 +234,6 @@ export const getStaticProps: GetStaticProps = async ({}: GetStaticPropsContext) 
   }
 };
 
-// Home.getInitialProps = async (context) => {
-//   try {
-//     const queryPage = (context.query as any).page;
-//     const currentPage: number = queryPage ? Number(queryPage) : 1;
-//     const rowsPerPage = 6;
+Pages.Layout = MainLayout;
 
-//     let posts: PostI[] = [];
-//     let tags: TagI[] = [];
-//     let totalPages = 0;
-
-//     const afterFetchIndexes = {
-//       tag: 0,
-//       post: 1,
-//     };
-//     const afterAllSettled = await Promise.allSettled([
-//       tagService.getTags({ page: 1, rowsPerPage: 999 }),
-//       postService.getList(
-//         { with: "tags", page: currentPage, rowsPerPage: rowsPerPage },
-//         {
-//           headers: {
-//             "Tracking-Token": trackingService(context.req).getTokenTracking() ?? "",
-//           },
-//         }
-//       ),
-//     ]);
-
-//     if (afterAllSettled[afterFetchIndexes.tag].status === "fulfilled") {
-//       const { data }: HttpResponseApi<HttpGetTagsResponse> = (afterAllSettled[afterFetchIndexes.tag] as any).value;
-
-//       tags = data.data;
-//     }
-
-//     if (afterAllSettled[afterFetchIndexes.post].status === "fulfilled") {
-//       const { data }: HttpResponseApi<HttpGetPostsListResponse> = (afterAllSettled[afterFetchIndexes.post] as any)
-//         .value;
-
-//       posts = data.posts.data;
-//       totalPages = Math.ceil(data.total / data.posts.per_page);
-//     }
-
-//     return {
-//       paginate: { currentPage, totalPages },
-//       tags,
-//       posts,
-//     };
-//   } catch (e) {
-//     return {
-//       paginate: {
-//         currentPage: 1,
-//         totalPages: 0,
-//       },
-//       tags: [],
-//       posts: [],
-//       notFound: true,
-//     };
-//   }
-// };
-
-Home.Layout = MainLayout;
-
-export default Home;
+export default Pages;
