@@ -1,3 +1,4 @@
+import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -6,7 +7,6 @@ import Badge from "../../components/Badge/Badge";
 import ContainerMedium from "../../components/Container/ContainerMedium";
 import Giscus from "../../components/Discuss/Giscus";
 import Empty from "../../components/Empty/Empty";
-import NotFound from "../../components/Error/NotFound";
 import IconButton from "../../components/Icon/IconButton";
 import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
 import TableOfContents from "../../components/TableOfContents/TableOfContents";
@@ -20,101 +20,16 @@ import { NextPageWithLayout } from "../_app";
 export interface PostSlugProps {
   post?: PostI;
   relatedPosts?: PostI[];
-  notFound?: boolean;
 }
 
-const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts, notFound }) => {
+const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => {
   usePrism();
-  // useScript("https://utteranc.es/client.js", {
-  //   attributes: [
-  //     {
-  //       key: "repo",
-  //       value: "duongductrong/codestus-next-v2",
-  //     },
-  //     {
-  //       key: "issue-term",
-  //       value: "title",
-  //     },
-  //     {
-  //       key: "theme",
-  //       value: "github-light",
-  //     },
-  //     {
-  //       key: "crossorigin",
-  //       value: "anonymous",
-  //     },
-  //     {
-  //       key: "async",
-  //       value: true,
-  //     },
-  //     {
-  //       key: "label",
-  //       value: "comments",
-  //     },
-  //   ],
-  // });
-
-  // useScript("https://giscus.app/client.js", {
-  //   attributes: [
-  //     {
-  //       key: "data-repo",
-  //       value: "duongductrong/codestus-next-v2",
-  //     },
-  //     {
-  //       key: "data-repo-id",
-  //       value: "R_kgDOGwoYXQ",
-  //     },
-  //     {
-  //       key: "data-category",
-  //       value: "General",
-  //     },
-  //     {
-  //       key: "data-category-id",
-  //       value: "DIC_kwDOGwoYXc4CBO7p",
-  //     },
-  //     {
-  //       key: "data-mapping",
-  //       value: "title",
-  //     },
-  //     {
-  //       key: "data-reactions-enabled",
-  //       value: "1",
-  //     },
-  //     {
-  //       key: "data-emit-metadata",
-  //       value: "0",
-  //     },
-  //     {
-  //       key: "data-input-position",
-  //       value: "bottom",
-  //     },
-  //     {
-  //       key: "data-theme",
-  //       value: "light",
-  //     },
-  //     {
-  //       key: "data-lang",
-  //       value: "en",
-  //     },
-  //     {
-  //       key: "crossorigin",
-  //       value: "anonymous",
-  //     },
-  //     {
-  //       key: "async",
-  //       value: true,
-  //     },
-  //   ],
-  // });
 
   const router = useRouter();
 
   const onPreviousPage = () => {
     router.back();
   };
-
-  // Not found this post
-  if (notFound) return <NotFound />;
 
   return (
     <ContainerMedium className="lg:flex lg:flex-wrap my-32 items-start">
@@ -225,28 +140,75 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts, notFo
   );
 };
 
-PostSlug.getInitialProps = async (ctx) => {
-  let response;
-  let post: PostI | undefined;
-  let relatedPosts: PostI[] = [];
-  let isNotFound: boolean = false;
+// PostSlug.getInitialProps = async (ctx) => {
+//   let response;
+//   let post: PostI | undefined;
+//   let relatedPosts: PostI[] = [];
+//   let isNotFound: boolean = false;
 
-  const { query } = ctx;
-  const slug: any = query.slug;
+//   const { query } = ctx;
+//   const slug: any = query.slug;
 
+//   try {
+//     response = await postService.getInfo(slug, { with: "user,tag", relatedPosts: true });
+//     post = response.data.post;
+//     relatedPosts = response.data.related_posts;
+//   } catch (e) {
+//     isNotFound = true;
+//   }
+
+//   return {
+//     post: post,
+//     relatedPosts: relatedPosts,
+//     notFound: isNotFound ?? true,
+//   };
+// };
+
+export const getStaticPaths: GetStaticPaths = async ({}: GetStaticPathsContext) => {
   try {
+    const response = await postService.getList({ page: 1, rowsPerPage: 999 }, {});
+
+    const paths: string[] = response.data.posts.data.map(({ slug }) => {
+      return `/posts/${slug}`;
+    });
+
+    return {
+      paths: paths,
+      fallback: true,
+    };
+  } catch (e) {
+    return {
+      paths: [],
+      fallback: false,
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
+  try {
+    let response;
+    let post: PostI | undefined;
+    let relatedPosts: PostI[] = [];
+
+    const { slug }: any = params;
+
     response = await postService.getInfo(slug, { with: "user,tag", relatedPosts: true });
     post = response.data.post;
     relatedPosts = response.data.related_posts;
-  } catch (e) {
-    isNotFound = true;
-  }
 
-  return {
-    post: post,
-    relatedPosts: relatedPosts,
-    notFound: isNotFound ?? true,
-  };
+    return {
+      props: {
+        post: post ?? {},
+        relatedPosts: relatedPosts ?? [],
+      },
+      // 6 hours (21600 seconds) to clear cache
+      revalidate: 21600,
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };
 
 PostSlug.Layout = MainLayout;
