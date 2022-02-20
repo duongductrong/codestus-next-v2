@@ -137,9 +137,15 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
               <Empty />
             )}
             {/* Paginate */}
-            <nav role="navigation" className="flex items-center justify-between">
-              <Link href={currentPage && currentPage > 1 ? `/page/${currentPage - 1}` : `/page/1`}>
-                <a className="font-bold inline-flex items-center">
+            <nav role="navigation" className="flex items-center justify-center">
+              <Link href={currentPage && currentPage > 2 ? `/page/${currentPage - 1}` : `/`}>
+                <a
+                  className={classNames(
+                    "font-bold inline-flex items-center mr-2 hover:-translate-x-4 transition-all duration-300",
+                    {
+                      "text-slate-300": currentPage === 1,
+                    }
+                  )}>
                   <FaArrowLeft className="mr-2" /> Newest
                 </a>
               </Link>
@@ -150,7 +156,13 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
                     ? `/page/${currentPage + 1}`
                     : `/page/${currentPage}`
                 }>
-                <a className="font-bold inline-flex items-center">
+                <a
+                  className={classNames(
+                    "font-bold inline-flex items-center ml-2 hover:translate-x-4 transition-all duration-300",
+                    {
+                      "text-slate-300": currentPage === totalPages,
+                    }
+                  )}>
                   Oldest <FaArrowRight className="ml-2" />
                 </a>
               </Link>
@@ -204,7 +216,7 @@ export const getStaticProps: GetStaticProps = async ({}: GetStaticPropsContext) 
         tags,
         posts,
       },
-      revalidate: 3600 / 2,
+      revalidate: 3600,
     };
   } catch (e) {
     return {

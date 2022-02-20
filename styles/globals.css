@@ -1,8 +1,9 @@
 @import "tailwindcss/base";
 
-@import "tailwindcss/components";;
+@import "tailwindcss/components";
 @import "./components/body-component.css";
 @import "./components/fade-io-y-transition.css";
 @import "./components/slide-transition.css";
+@import "./components/main-layout.css";
 
 @import "tailwindcss/utilities";

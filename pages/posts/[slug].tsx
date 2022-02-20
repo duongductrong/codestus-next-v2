@@ -210,8 +210,8 @@ export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsC
         post: post ?? {},
         relatedPosts: relatedPosts ?? [],
       },
-      // 6 hours (21600 seconds) to clear cache
-      revalidate: 21600,
+      // 1 hours (3600 seconds) to clear cache
+      revalidate: 3600,
     };
   } catch {
     return {
