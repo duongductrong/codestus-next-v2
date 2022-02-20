@@ -7,7 +7,7 @@ export interface NextSeoCustomProps {
   url?: string;
   title?: string;
   description?: string;
-  images: OpenGraphMedia[];
+  images?: OpenGraphMedia[];
 
   openGraphArticle?: OpenGraphArticle;
 
