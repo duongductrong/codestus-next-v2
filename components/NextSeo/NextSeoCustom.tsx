@@ -1,6 +1,7 @@
 import { ArticleJsonLd, ArticleJsonLdProps, NextSeo } from "next-seo";
 import { OpenGraphArticle } from "next-seo/lib/types";
 import React, { FC, Fragment } from "react";
+import useApp from "../../hooks/useApp";
 
 export interface NextSeoCustomProps {
   url?: string;
@@ -12,13 +13,9 @@ export interface NextSeoCustomProps {
   articleJson?: ArticleJsonLdProps;
 }
 
-const NextSeoCustom: FC<NextSeoCustomProps> = ({
-  title,
-  description,
-  url = "https://codestus.com",
-  openGraphArticle,
-  articleJson,
-}) => {
+const NextSeoCustom: FC<NextSeoCustomProps> = ({ title, description, url, openGraphArticle, articleJson }) => {
+  const { getCanonicalUrl } = useApp();
+
   return (
     <Fragment>
       <NextSeo
@@ -27,7 +24,7 @@ const NextSeoCustom: FC<NextSeoCustomProps> = ({
         description={
           description ?? "Codestus.com - Blog, Tutorials, Chia sẽ kinh nghiệm Frontend, UX/UI, ReactJS, VueJS"
         }
-        canonical={url ?? ""}
+        canonical={url ?? getCanonicalUrl()}
         openGraph={{
           title: title ?? "Trang chủ - Codestus.com | Frontend Developer",
           description:
@@ -51,7 +48,7 @@ const NextSeoCustom: FC<NextSeoCustomProps> = ({
           ],
         }}
         twitter={{
-          site: url,
+          site: url ?? getCanonicalUrl(),
           cardType: "summary_large_image",
           handle: "@handle",
         }}

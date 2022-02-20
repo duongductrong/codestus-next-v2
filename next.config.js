@@ -4,6 +4,7 @@ const nextConfig = {
 
   env: {
     APP_API: process.env.APP_API,
+    APP_URL: process.env.APP_URL
   },
 };
 

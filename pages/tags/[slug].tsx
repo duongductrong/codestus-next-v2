@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { Fragment } from "react";
 import { FaArrowDown, FaCode, FaHtml5, FaJs, FaLaravel, FaNodeJs, FaReact, FaVuejs } from "react-icons/fa";
 import Card from "../../components/Card/Card";
@@ -11,6 +10,7 @@ import Skeleton from "../../components/Skeleton/Skeleton";
 import Typography from "../../components/Typography/Typography";
 import { PostI } from "../../core/services/postService";
 import tagService, { TagI } from "../../core/services/tagService";
+import useApp from "../../hooks/useApp";
 import useTag from "../../hooks/useTag";
 import MainLayout from "../../Layout/MainLayout";
 // import Image from "next/image";
@@ -38,7 +38,7 @@ export interface PostTagProps {
 }
 
 const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate, notFound }) => {
-  const { asPath } = useRouter();
+  const { getCanonicalUrl } = useApp();
   const {
     loading,
     posts: _posts,
@@ -59,7 +59,7 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate, notFo
 
   return (
     <Fragment>
-      <NextSeoCustom title={tag.name} description={tag.description} url={asPath} />
+      <NextSeoCustom title={tag.name} description={tag.description} url={getCanonicalUrl()} />
 
       {/* <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         <Link href={"/"}>

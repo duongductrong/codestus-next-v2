@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { GetStaticProps, GetStaticPropsContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Badge from "../components/Badge/Badge";
@@ -16,6 +15,7 @@ import Typography from "../components/Typography/Typography";
 import { HttpResponseApi } from "../core/services/axiosInstance";
 import postService, { HttpGetPostsListResponse, PostI } from "../core/services/postService";
 import tagService, { HttpGetTagsResponse, TagI } from "../core/services/tagService";
+import useApp from "../hooks/useApp";
 import usePosts from "../hooks/usePosts";
 import MainLayout from "../Layout/MainLayout";
 import StaticAvatar from "../public/statics/avatar.png";
@@ -41,7 +41,7 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
     { text: "text-slate-600", bg: "bg-slate-100" },
     { text: "text-zinc-600", bg: "bg-zinc-100" },
   ];
-  const { asPath } = useRouter();
+  const { getCanonicalUrl } = useApp();
   const { currentPage, totalPages } = paginate;
   const { data, loading } = usePosts({
     data: posts,
@@ -56,7 +56,7 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
 
   return (
     <Fragment>
-      <NextSeoCustom url={asPath} />
+      <NextSeoCustom url={getCanonicalUrl()} />
 
       <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         <Link href={"/"}>

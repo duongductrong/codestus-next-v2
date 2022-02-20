@@ -14,6 +14,7 @@ import Typography from "../../components/Typography/Typography";
 import hitService from "../../core/services/hitService";
 import postService, { PostI } from "../../core/services/postService";
 import { TagI } from "../../core/services/tagService";
+import useApp from "../../hooks/useApp";
 import usePrism from "../../hooks/usePrism";
 import MainLayout from "../../Layout/MainLayout";
 import { NextPageWithLayout } from "../_app";
@@ -27,6 +28,7 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
   usePrism();
 
   const router = useRouter();
+  const { getCanonicalUrl } = useApp();
 
   const onPreviousPage = () => {
     router.back();
@@ -46,7 +48,7 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
       <NextSeoCustom
         title={post?.title}
         description={post?.description}
-        url={"/posts/" + post?.slug}
+        url={getCanonicalUrl()}
         openGraphArticle={{
           authors: [post?.user?.name ?? ""],
           publishedTime: post?.publish_at,
@@ -56,7 +58,7 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
           title: post?.title ?? "",
           description: post?.description ?? "",
           authorName: post?.user?.name ?? "",
-          url: `/posts/${post?.slug}`,
+          url: getCanonicalUrl(),
           datePublished: post?.publish_at ?? post?.created_at ?? "",
           images: [post?.thumbnail ?? ""],
           type: "Blog",
