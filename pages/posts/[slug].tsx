@@ -49,6 +49,17 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
         title={post?.title}
         description={post?.description}
         url={getCanonicalUrl()}
+        images={
+          post?.thumbnail
+            ? [
+                {
+                  url: post?.thumbnail,
+                  alt: post?.title,
+                  secureUrl: post?.thumbnail,
+                },
+              ]
+            : []
+        }
         openGraphArticle={{
           authors: [post?.user?.name ?? ""],
           publishedTime: post?.publish_at,

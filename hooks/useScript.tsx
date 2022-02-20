@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import Router from "next/router";
+import { useEffect, useState } from "react";
 
 export interface useScriptAttributesI {
   key: string;
@@ -8,9 +9,12 @@ export interface useScriptAttributesI {
 export interface useScriptOptionsI {
   callback?: Function;
   attributes?: useScriptAttributesI[];
+  prefetch?: boolean;
 }
 
 function useScript(src: string, options?: useScriptOptionsI) {
+  const [rePrefetch, setRepreFetch] = useState(Math.random());
+
   useEffect(() => {
     const script: HTMLScriptElement = document.createElement("script");
     const randomId = Math.random().toString();
@@ -36,7 +40,14 @@ function useScript(src: string, options?: useScriptOptionsI) {
     return () => {
       document.body.removeChild(script);
     };
-  }, [src, options]);
+  }, [src, options, rePrefetch]);
+
+  if (options?.prefetch) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    Router.events.on("routeChangeComplete", () => {
+      setRepreFetch(Math.random());
+    });
+  }
 
   return null;
 }

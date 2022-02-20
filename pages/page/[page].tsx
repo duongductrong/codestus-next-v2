@@ -4,13 +4,13 @@ import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment } from "react";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { HomeProps } from "..";
 import Badge from "../../components/Badge/Badge";
 import Card from "../../components/Card/Card";
 import ContainerMedium from "../../components/Container/ContainerMedium";
 import Empty from "../../components/Empty/Empty";
 import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
+import Pagination from "../../components/Pagination/Pagination";
 import Skeleton from "../../components/Skeleton/Skeleton";
 import Typography from "../../components/Typography/Typography";
 import { HttpResponseApi } from "../../core/services/axiosInstance";
@@ -133,38 +133,7 @@ const Pages: NextPageWithLayout<PagesProps> = ({
             ) : (
               <Empty />
             )}
-            {/* Paginate */}
-            <nav role="navigation" className="flex items-center justify-center">
-              <Link href={currentPage && currentPage > 2 ? `/page/${currentPage - 1}` : `/`}>
-                <a
-                  className={classNames(
-                    "font-bold inline-flex items-center mr-2 hover:-translate-x-4 transition-all duration-300",
-                    {
-                      "text-slate-300": currentPage === 1,
-                    }
-                  )}>
-                  <FaArrowLeft className="mr-2" /> Newest
-                </a>
-              </Link>
-
-              <Link
-                href={
-                  currentPage && totalPages && (currentPage < totalPages ?? 0)
-                    ? `/page/${currentPage + 1}`
-                    : `/page/${currentPage}`
-                }>
-                <a
-                  className={classNames(
-                    "font-bold inline-flex items-center ml-2 hover:translate-x-4 transition-all duration-300",
-                    {
-                      "text-slate-300": currentPage === totalPages,
-                    }
-                  )}>
-                  Oldest <FaArrowRight className="ml-2" />
-                </a>
-              </Link>
-            </nav>
-            {/* /Paginate */}
+            <Pagination.Simple align="right" currentPage={currentPage} totalPages={totalPages}></Pagination.Simple>
 
             {loading && <Skeleton.Card bgTransparent={true} className="mb-16"></Skeleton.Card>}
           </Fragment>

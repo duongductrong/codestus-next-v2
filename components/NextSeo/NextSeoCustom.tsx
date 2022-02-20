@@ -1,5 +1,5 @@
 import { ArticleJsonLd, ArticleJsonLdProps, NextSeo } from "next-seo";
-import { OpenGraphArticle } from "next-seo/lib/types";
+import { OpenGraphArticle, OpenGraphMedia } from "next-seo/lib/types";
 import React, { FC, Fragment } from "react";
 import useApp from "../../hooks/useApp";
 
@@ -7,13 +7,21 @@ export interface NextSeoCustomProps {
   url?: string;
   title?: string;
   description?: string;
+  images: OpenGraphMedia[];
 
   openGraphArticle?: OpenGraphArticle;
 
   articleJson?: ArticleJsonLdProps;
 }
 
-const NextSeoCustom: FC<NextSeoCustomProps> = ({ title, description, url, openGraphArticle, articleJson }) => {
+const NextSeoCustom: FC<NextSeoCustomProps> = ({
+  title,
+  description,
+  url,
+  openGraphArticle,
+  articleJson,
+  images = [],
+}) => {
   const { getCanonicalUrl } = useApp();
 
   return (
@@ -37,6 +45,7 @@ const NextSeoCustom: FC<NextSeoCustomProps> = ({ title, description, url, openGr
           article: openGraphArticle,
 
           images: [
+            ...images,
             {
               url: "/statics/open-graph-image.png",
               width: 1500,

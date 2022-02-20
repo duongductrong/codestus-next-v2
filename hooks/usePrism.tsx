@@ -8,7 +8,7 @@
 import useScript from "./useScript";
 
 function usePrism() {
-  useScript("/vendors/js/prism.js");
+  useScript("/vendors/js/prism.js", { prefetch: true });
 }
 
 export default usePrism;
