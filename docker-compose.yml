@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  codestus:
+    container_name: codestus-next
+    build: 
+      context: ./
+      dockerfile: Dockerfile-dev
+    ports:
+      - 3000:3000
+    networks:
+      - codestus-net
+networks:
+  codestus-net:
+    driver: bridge
