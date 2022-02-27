@@ -10,7 +10,7 @@ import Button from "./Button";
  * 4. tagName
  */
 
-describe("1. Testing color props in button", () => {
+describe("1. Display color props in button", () => {
   it("Should match className when assign color props is 'primary'", () => {
     const { container } = render(<Button color="primary" />);
 
@@ -46,7 +46,7 @@ describe("1. Testing color props in button", () => {
   });
 });
 
-describe("2. Testing size props of button component ", () => {
+describe("2. Display size props of button component", () => {
   it("Should matched size medium", () => {
     const { container } = render(<Button size="md" />);
 
@@ -75,7 +75,7 @@ describe("2. Testing size props of button component ", () => {
   });
 });
 
-describe("3. Testing rounding circle in button component ", () => {
+describe("3. Display rounding circle in button component ", () => {
   it("Default border-radius style for button", () => {
     const { container } = render(<Button />);
 
@@ -100,7 +100,7 @@ describe("3. Testing rounding circle in button component ", () => {
   });
 });
 
-describe("4. Testing tagName in button", () => {
+describe("4. Display tagName in button", () => {
   it("Should matched html tag is 'A'", () => {
     const { container } = render(<Button tagName="a">Example</Button>);
 

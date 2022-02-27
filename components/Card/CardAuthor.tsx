@@ -18,8 +18,9 @@ const CardAuthor: FC<CardAuthorProps> = ({ title, description, className, icon, 
         "inline-flex items-center text-sm px-2 py-2 rounded-lg w-full transition-all duration-300",
         className
       )}>
-      {src && (
+      {src || icon ? (
         <div
+          data-testid="avatar-test"
           className={classNames(
             "w-11 h-11 bg-blue-100 rounded-lg overflow-hidden mr-3 inline-flex items-center justify-center"
           )}>
@@ -29,7 +30,7 @@ const CardAuthor: FC<CardAuthorProps> = ({ title, description, className, icon, 
               className: "text-lg text-blue-500",
             })}
         </div>
-      )}
+      ) : null}
       <div className="whitespace-nowrap">
         <b className="font-semibold">{title}</b>
         <p className="text-slate-500">{description}</p>

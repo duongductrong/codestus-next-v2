@@ -23,7 +23,7 @@ const Card: FC<CardProps> = ({ title, description, slug, countViewer = "0", crea
     <article className={classNames("flex flex-wrap", className)}>
       {/* Date of card */}
       <div className="mb-4 md:mb-0 sm:w-3/12 md:w-2/12 pr-4">
-        <span className="text-sm text-slate-500 dark:text-slate-500 mb-2 inline-block">
+        <span data-testid="created-at-test" className="text-sm text-slate-500 dark:text-slate-500 mb-2 inline-block">
           {moment(createdAt).format("MMM Do YYYY")}
         </span>
       </div>
@@ -32,7 +32,7 @@ const Card: FC<CardProps> = ({ title, description, slug, countViewer = "0", crea
         <div className="space-x-4 mb-2">
           {tag?.map(({ tagId, name, slug }, index) => (
             <Link key={`Card-${tagId}${slug}${index}`} href={`/tags/${slug}`}>
-              <a>
+              <a data-testid="tags-test">
                 <Badge key={`${tagId}${index}`}>{name}</Badge>
               </a>
             </Link>
@@ -41,7 +41,7 @@ const Card: FC<CardProps> = ({ title, description, slug, countViewer = "0", crea
 
         {/* Card title */}
         <Link href={`/posts/${slug}`}>
-          <a>
+          <a data-testid="slug-title-test">
             <Typography tagName="h2" variant="h4" className="font-semibold mb-2 cursor-pointer">
               {title ?? ""}
             </Typography>
@@ -49,7 +49,7 @@ const Card: FC<CardProps> = ({ title, description, slug, countViewer = "0", crea
         </Link>
 
         {countViewer ? (
-          <span className="text-sm text-slate-400 mb-2 inline-block">{countViewer.toString()} lượt xem</span>
+          <span data-testid="count-viewer-test" className="text-sm text-slate-400 mb-2 inline-block">{countViewer.toString()} lượt xem</span>
         ) : (
           ""
         )}
@@ -64,7 +64,7 @@ const Card: FC<CardProps> = ({ title, description, slug, countViewer = "0", crea
 
         {/* Call to action card */}
         <Link href={`/posts/${slug}`}>
-          <a>
+          <a data-testid="slug-link-test">
             <Button className="mt-4 rounded-full" color="secondary" size="md">
               Read more <FaChevronRight className="ml-2 text-sm" />
             </Button>

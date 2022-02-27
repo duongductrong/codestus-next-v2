@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import Badge from "./Badge";
 
-describe("1. Testing color props", () => {
+describe("1. Display color props", () => {
   it("Should matched className for color is 'primary'", () => {
     const { container } = render(<Badge color="primary" />);
     const element: HTMLDivElement = container.firstChild as any;
