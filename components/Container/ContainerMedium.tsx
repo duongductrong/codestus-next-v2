@@ -6,7 +6,7 @@ export interface ContainerMediumProps extends AtomicComponent<HTMLDivElement> {}
 
 const ContainerMedium: FC<ContainerMediumProps> = ({ className, children, style, ...props }) => {
   return (
-    <div {...props} style={{ ...style, maxWidth: "968px" }} className={classNames("mx-auto px-4", className)}>
+    <div data-testid="container-medium-test" {...props} style={{ ...style, maxWidth: "968px" }} className={classNames("mx-auto px-4", className)}>
       {children}
     </div>
   );

@@ -90,7 +90,7 @@ const Giscus: FC<GiscusProps> = ({
 
   const ComponentName: any = tagName;
 
-  return <ComponentName {...props} className={classNames("giscus", className)} id="giscus"></ComponentName>;
+  return <ComponentName {...props} className={classNames("giscus", className)} id="giscus" data-testid="giscus-test"></ComponentName>;
 };
 
 export default Giscus;
