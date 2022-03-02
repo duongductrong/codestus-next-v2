@@ -15,7 +15,7 @@ export interface TableOfContentsProps {
 const TableOfContents: FC<TableOfContentsProps> = ({ data, title }) => {
   return (
     <nav>
-      <h3 className="text-md font-bold mb-2">{title}</h3>
+      <h2 className="text-md font-bold mb-2">{title}</h2>
       <ul>
         {(data ?? []).map(({ id, text, type }) => (
           <li
