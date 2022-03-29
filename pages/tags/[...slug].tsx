@@ -42,7 +42,7 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => 
 
   return (
     <Fragment>
-      <NextSeoCustom title={tag.name} description={tag.description} url={getCanonicalUrl()} />
+      <NextSeoCustom title={tag?.name} description={tag?.description} url={getCanonicalUrl()} />
 
       <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         <Link href={"/"}>
@@ -120,10 +120,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const paths: string[] = [];
     const getTags = await tagService.getTags();
 
+    // Get all tags
     const allTagPaths: string[] = getTags.data.data.map((tag) => {
       return tag.slug as string;
     });
 
+    // Get every tags base on all slug tags
     const allSettledTag = await Promise.allSettled(
       allTagPaths.map((slug) => {
         return tagService.getTag(slug, {
@@ -132,15 +134,21 @@ export const getStaticPaths: GetStaticPaths = async () => {
       })
     );
 
+    // Get tag items
     allSettledTag.map((tag) => {
+      // Response should be 200
       if (tag.status === "fulfilled") {
         const _tag: AxiosResponse<HttpGetTagResponse> = tag.value as any;
 
-        const { tag: __tag, totalPosts } = _tag.data;
+        const { tag: __tag, totalPosts, posts } = _tag.data;
 
+        // Add main path slug tags
         paths.push(`/tags/${__tag.slug}`);
 
-        Array(totalPosts ?? 1)
+        const totalPage: number = Math.ceil(Number(posts?.per_page) / Number(totalPosts));
+
+        // Add path slug tags with page
+        Array(totalPage ?? 1)
           .fill(1)
           .map((_, index) => paths.push(`/tags/${__tag.slug}/${index + 1}`));
       }
