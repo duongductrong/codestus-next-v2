@@ -17,7 +17,7 @@ const PaginationSimple: FC<PaginationSimpleProps> = ({ currentPage = 1, totalPag
 
   return (
     <nav role="navigation" className={classNames("flex items-center", _align)}>
-      <Link href={currentPage && currentPage > 2 ? `/page/${currentPage - 1}` : `/`}>
+      <Link href={currentPage && currentPage > 2 ? `${prefix}/${currentPage - 1}` : `${ currentPage <= 2 && prefix !== "/page" ? prefix : "/" }`}>
         <a
           className={classNames(
             "font-bold inline-flex items-center mr-2 hover:-translate-x-4 transition-all duration-300",
