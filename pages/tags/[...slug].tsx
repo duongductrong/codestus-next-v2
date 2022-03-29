@@ -1,24 +1,24 @@
+import { AxiosResponse } from "axios";
+import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment } from "react";
-import { FaArrowDown, FaCode, FaHtml5, FaJs, FaLaravel, FaNodeJs, FaReact, FaVuejs } from "react-icons/fa";
+import { FaCode, FaHtml5, FaJs, FaLaravel, FaNodeJs, FaReact, FaVuejs } from "react-icons/fa";
 import Card from "../../components/Card/Card";
 import ContainerMedium from "../../components/Container/ContainerMedium";
 import Empty from "../../components/Empty/Empty";
-import IconButton from "../../components/Icon/IconButton";
 import NextSeoCustom from "../../components/NextSeo/NextSeoCustom";
-import Skeleton from "../../components/Skeleton/Skeleton";
+import Pagination from "../../components/Pagination/Pagination";
 import Typography from "../../components/Typography/Typography";
 import { PostI } from "../../core/services/postService";
-import tagService, { TagI } from "../../core/services/tagService";
+import tagService, { HttpGetTagResponse, TagI } from "../../core/services/tagService";
 import useApp from "../../hooks/useApp";
-import useTag from "../../hooks/useTag";
 import MainLayout from "../../Layout/MainLayout";
-// import Image from "next/image";
-// import StaticAvatar from "../../public/statics/avatar.png";
 import { NextPageWithLayout } from "../_app";
+import StaticAvatar from "../../public/statics/avatar.png";
 
 export interface GetServerSideParams {
-  slug?: string;
+  slug?: string | string[];
 }
 
 export interface GetServerSideQuery {
@@ -37,31 +37,14 @@ export interface PostTagProps {
   notFound?: boolean;
 }
 
-const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate, notFound }) => {
+const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => {
   const { getCanonicalUrl } = useApp();
-  const {
-    loading,
-    posts: _posts,
-    outOfData,
-    preFetchPosts,
-  } = useTag({ page: paginate.page, slug: tag.slug, defaultPosts: posts, defaultTag: tag });
-
-  const onLoadInfinitePosts = () => {
-    preFetchPosts();
-
-    setTimeout(() => {
-      window.scrollTo({
-        behavior: "smooth",
-        top: (window.pageYOffset ?? 0) + 500,
-      });
-    }, 0);
-  };
 
   return (
     <Fragment>
       <NextSeoCustom title={tag.name} description={tag.description} url={getCanonicalUrl()} />
 
-      {/* <div className="text-center mb-4 flex items-center justify-center flex-wrap">
+      <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         <Link href={"/"}>
           <a>
             <Image
@@ -73,7 +56,7 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate, notFo
             />
           </a>
         </Link>
-      </div> */}
+      </div>
 
       <div className="text-center mb-4 flex items-center justify-center flex-wrap">
         {tag.name?.toLowerCase().includes("react") ? (
@@ -101,8 +84,8 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate, notFo
       </Typography>
 
       <ContainerMedium className="mt-16">
-        {_posts.length ? (
-          _posts.map(
+        {posts.length ? (
+          posts.map(
             ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
               <Card
                 title={title}
@@ -120,56 +103,75 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate, notFo
           <Empty />
         )}
 
-        {/* Bot read navigation It's great for SEO content */}
-        <nav role="navigation" aria-label="Pagination navigate" className="hidden">
-          <ul>
-            {Array(paginate.totalPagesOfPosts)
-              .fill(0)
-              .map((item, index) => {
-                const page = index + 1;
-                return (
-                  <li key={index}>
-                    <Link href={`/tags/${tag.slug}?page=${page}`}>
-                      <a
-                        aria-current={paginate.page === page}
-                        aria-label={paginate.page !== page ? `Go to page ${page}` : `Current page, page ${page}`}>
-                        {page}
-                      </a>
-                    </Link>
-                  </li>
-                );
-              })}
-          </ul>
-        </nav>
+        <Pagination.Simple
+          align="right"
+          currentPage={paginate.page}
+          totalPages={paginate.totalPagesOfPosts}
+          prefix={`/tags/${tag.slug}`}></Pagination.Simple>
 
-        {loading && <Skeleton.Card bgTransparent={true} />}
+        {/* {loading && <Skeleton.Card bgTransparent={true} />} */}
       </ContainerMedium>
-
-      {!notFound ? (
-        <Fragment>
-          {!outOfData && (
-            <section className="text-center">
-              <IconButton onClick={onLoadInfinitePosts} className="animate-bounce">
-                <FaArrowDown />
-              </IconButton>
-            </section>
-          )}
-        </Fragment>
-      ) : null}
     </Fragment>
   );
 };
 
-PostTag.getInitialProps = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    const query: GetServerSideQuery = context.query;
-    const { slug } = context.query as GetServerSideParams;
+    const paths: string[] = [];
+    const getTags = await tagService.getTags();
+
+    const allTagPaths: string[] = getTags.data.data.map((tag) => {
+      return tag.slug as string;
+    });
+
+    const allSettledTag = await Promise.allSettled(
+      allTagPaths.map((slug) => {
+        return tagService.getTag(slug, {
+          with: ["posts"],
+        });
+      })
+    );
+
+    allSettledTag.map((tag) => {
+      if (tag.status === "fulfilled") {
+        const _tag: AxiosResponse<HttpGetTagResponse> = tag.value as any;
+
+        const { tag: __tag, totalPosts } = _tag.data;
+
+        paths.push(`/tags/${__tag.slug}`);
+
+        Array(totalPosts ?? 1)
+          .fill(1)
+          .map((_, index) => paths.push(`/tags/${__tag.slug}/${index + 1}`));
+      }
+    });
+
+    return {
+      paths,
+      fallback: true,
+    };
+  } catch {
+    return {
+      fallback: "blocking",
+      paths: [],
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps = async (ctx: GetStaticPropsContext) => {
+  try {
+    const query: any = ctx.params;
+    const { slug } = query as GetServerSideParams;
+
+    const _slug: string | undefined = Array.isArray(slug) ? slug[0] : slug;
+    const _page: number = Array.isArray(slug) ? Number(slug[1] ?? 1) : 1;
+
     const paginate: { page?: number; totalPagesOfPosts?: number } = {
-      page: Number(query.page ?? 1),
+      page: Number(_page ?? 1),
       totalPagesOfPosts: 0,
     };
 
-    const { data } = await tagService.getTag(slug, {
+    const { data } = await tagService.getTag(_slug, {
       page: paginate.page,
       with: ["posts"],
     });
@@ -177,18 +179,23 @@ PostTag.getInitialProps = async (context) => {
     paginate.totalPagesOfPosts = Math.ceil((data.totalPosts ?? 0) / (data.posts?.per_page ?? 0)) ?? 0;
 
     return {
-      tag: data.tag,
-      posts: data.posts?.data ?? [],
-      paginate,
+      props: {
+        tag: data.tag,
+        posts: data.posts?.data ?? [],
+        paginate,
+      },
       notFound: false,
+      revalidate: 3600,
     };
   } catch {
     return {
-      tag: {},
-      posts: [],
-      paginate: {
-        page: 1,
-        totalPagesOfPosts: 0,
+      props: {
+        tag: {},
+        posts: [],
+        paginate: {
+          page: 1,
+          totalPagesOfPosts: 0,
+        },
       },
       notFound: true,
     };

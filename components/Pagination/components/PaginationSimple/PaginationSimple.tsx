@@ -8,9 +8,10 @@ export interface PaginationSimpleProps {
   totalPages?: number;
 
   align?: "left" | "center" | "right";
+  prefix?: string;
 }
 
-const PaginationSimple: FC<PaginationSimpleProps> = ({ currentPage = 1, totalPages = 0, align = "center" }) => {
+const PaginationSimple: FC<PaginationSimpleProps> = ({ currentPage = 1, totalPages = 0, align = "center", prefix = "/page" }) => {
   const _align =
     align === "center" ? "justify-center" : align === "left" ? "justify-start" : align === "right" ? "justify-end" : "";
 
@@ -31,8 +32,8 @@ const PaginationSimple: FC<PaginationSimpleProps> = ({ currentPage = 1, totalPag
       <Link
         href={
           currentPage && totalPages && (currentPage < totalPages ?? 0)
-            ? `/page/${currentPage + 1}`
-            : `/page/${currentPage}`
+            ? `${prefix}/${currentPage + 1}`
+            : `${prefix}/${currentPage}`
         }>
         <a
           className={classNames(

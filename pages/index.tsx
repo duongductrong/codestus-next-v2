@@ -194,64 +194,6 @@ export const getStaticProps: GetStaticProps = async ({}: GetStaticPropsContext) 
   }
 };
 
-// Home.getInitialProps = async (context) => {
-//   try {
-//     const queryPage = (context.query as any).page;
-//     const currentPage: number = queryPage ? Number(queryPage) : 1;
-//     const rowsPerPage = 6;
-
-//     let posts: PostI[] = [];
-//     let tags: TagI[] = [];
-//     let totalPages = 0;
-
-//     const afterFetchIndexes = {
-//       tag: 0,
-//       post: 1,
-//     };
-//     const afterAllSettled = await Promise.allSettled([
-//       tagService.getTags({ page: 1, rowsPerPage: 999 }),
-//       postService.getList(
-//         { with: "tags", page: currentPage, rowsPerPage: rowsPerPage },
-//         {
-//           headers: {
-//             "Tracking-Token": trackingService(context.req).getTokenTracking() ?? "",
-//           },
-//         }
-//       ),
-//     ]);
-
-//     if (afterAllSettled[afterFetchIndexes.tag].status === "fulfilled") {
-//       const { data }: HttpResponseApi<HttpGetTagsResponse> = (afterAllSettled[afterFetchIndexes.tag] as any).value;
-
-//       tags = data.data;
-//     }
-
-//     if (afterAllSettled[afterFetchIndexes.post].status === "fulfilled") {
-//       const { data }: HttpResponseApi<HttpGetPostsListResponse> = (afterAllSettled[afterFetchIndexes.post] as any)
-//         .value;
-
-//       posts = data.posts.data;
-//       totalPages = Math.ceil(data.total / data.posts.per_page);
-//     }
-
-//     return {
-//       paginate: { currentPage, totalPages },
-//       tags,
-//       posts,
-//     };
-//   } catch (e) {
-//     return {
-//       paginate: {
-//         currentPage: 1,
-//         totalPages: 0,
-//       },
-//       tags: [],
-//       posts: [],
-//       notFound: true,
-//     };
-//   }
-// };
-
 Home.Layout = MainLayout;
 
 export default Home;
