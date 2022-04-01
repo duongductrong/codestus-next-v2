@@ -109,7 +109,7 @@ const PostSlug: NextPageWithLayout<PostSlugProps> = ({ post, relatedPosts }) => 
         ) : null}
       </div>
       <div className="md:w-8/12 md:pl-4">
-        <div className="prose" dangerouslySetInnerHTML={{ __html: post?.content_html ?? "" }}></div>
+        <article className="prose" dangerouslySetInnerHTML={{ __html: post?.content_html ?? "" }}></article>
 
         {/* <Divider className="my-5" /> */}
 
