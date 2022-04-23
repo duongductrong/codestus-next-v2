@@ -86,11 +86,22 @@ const PostTag: NextPageWithLayout<PostTagProps> = ({ tag, posts, paginate }) => 
       <ContainerMedium className="mt-16">
         {posts.length ? (
           posts.map(
-            ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
+            ({
+              postId,
+              title,
+              description,
+              views,
+              slug,
+              created_at: createdAt,
+              publish_at: publishAt,
+              tags,
+              thumbnail,
+            }) => (
               <Card
                 title={title}
                 description={description}
                 countViewer={views}
+                thumbnail={thumbnail}
                 slug={slug}
                 className="mb-20"
                 createdAt={publishAt ?? createdAt}

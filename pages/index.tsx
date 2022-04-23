@@ -120,11 +120,22 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
           <Fragment>
             {posts.length ? (
               posts.map(
-                ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
+                ({
+                  postId,
+                  thumbnail,
+                  title,
+                  description,
+                  views,
+                  slug,
+                  created_at: createdAt,
+                  publish_at: publishAt,
+                  tags,
+                }) => (
                   <Card
                     title={title}
                     description={description}
                     countViewer={views}
+                    thumbnail={thumbnail}
                     slug={slug}
                     className="mb-20"
                     createdAt={publishAt ?? createdAt}

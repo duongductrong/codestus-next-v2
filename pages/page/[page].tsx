@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { HomeProps } from "..";
 import Badge from "../../components/Badge/Badge";
 import Card from "../../components/Card/Card";
@@ -117,12 +117,23 @@ const Pages: NextPageWithLayout<PagesProps> = ({
           <Fragment>
             {posts.length ? (
               posts.map(
-                ({ postId, title, description, views, slug, created_at: createdAt, publish_at: publishAt, tags }) => (
+                ({
+                  postId,
+                  title,
+                  description,
+                  views,
+                  slug,
+                  created_at: createdAt,
+                  publish_at: publishAt,
+                  tags,
+                  thumbnail,
+                }) => (
                   <Card
                     title={title}
                     description={description}
                     countViewer={views}
                     slug={slug}
+                    thumbnail={thumbnail}
                     className="mb-20"
                     createdAt={publishAt ?? createdAt}
                     key={`${postId?.toString()}${createdAt?.toString()}`}
