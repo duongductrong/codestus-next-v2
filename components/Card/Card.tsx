@@ -40,7 +40,7 @@ const Card: FC<CardProps> = ({ title, description, slug, countViewer = "0", crea
 
       <div className="sm:w-9/12 md:w-10/12">
         {/* Thumbnail */}
-        <div className="mb-4">
+        <div className="mb-4 cursor-pointer">
           <Link href={`/posts/${slug}`} passHref>
             <Image
               width={800}
