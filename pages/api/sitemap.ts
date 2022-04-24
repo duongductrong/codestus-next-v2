@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ];
 
     // Paths frm .nextjs
-    const outDir: string = `${__dirname}/../../../../public/sitemap.xml`;
+    const outDir: string = `public/sitemap.xml`;
     const sitemapContents: string = sitemap(urls);
 
     fs.writeFile(outDir, sitemapContents, (error) => {
