@@ -73,7 +73,7 @@ const Home: NextPageWithLayout<HomeProps> = ({ posts, tags, paginate }) => {
       </div>
 
       <Typography tagName="h1" variant="h2" className="text-center mb-4 font-bold">
-        Blogging
+        Codestus blogger
       </Typography>
       <Typography tagName="p" variant="h6" className="text-center mb-4">
         All the latest posts in Codestus.com for you. <br /> To read for your knowledged.
