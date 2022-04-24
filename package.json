@@ -42,7 +42,7 @@
     "@types/axios": "^0.14.0",
     "@types/jest": "^27.4.1",
     "@types/next-seo": "^2.1.2",
-    "@types/node": "17.0.10",
+    "@types/node": "^17.0.10",
     "@types/nprogress": "^0.2.0",
     "@types/react": "17.0.38",
     "@types/react-dom": "^17.0.11",

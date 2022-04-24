@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+// eslint-disable-next-line no-unused-vars
+import fs from "fs";
 import moment from "moment";
 import { GetServerSideProps } from "next";
-import React from "react";
 import { HttpResponseApi } from "../core/services/axiosInstance";
 import postService, { HttpGetPostsListResponse } from "../core/services/postService";
 import tagService, { HttpGetTagsResponse } from "../core/services/tagService";
@@ -61,11 +62,16 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       ...tagsUrl,
     ];
 
-    res?.setHeader("Content-type", "text/xml");
-    res?.write(sitemap(urls));
+    // Paths frm .nextjs
+    fs.writeFile(`${__dirname}/../../../public/sitemap.xml`, sitemap(urls), (error) => {
+      console.log(error);
+    });
+
+    res?.setHeader("Content-type", "text/plain");
+    res?.write("Created sitemap.xml");
     res?.end();
   } catch (e) {
-    res?.setHeader("Content-type", "text/xml");
+    res?.setHeader("Content-type", "text/plain");
     res?.write("Server has error");
     res?.end();
   }
